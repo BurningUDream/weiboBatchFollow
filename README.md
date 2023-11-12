@@ -130,7 +130,3 @@ let outputTimeout = setTimeout(checkAndOutputList, 3000);
     }, 5100 * length)
 })([3027806214,5991116818,1847588883])
 ```
-		.catch(error => console.error(`出错了 (${error.message})${list.slice(index).length ? `\n\n以下 ID 还未处理，请之后再试\n\n${JSON.stringify(list.slice(index))}` : ''}`))
-		.then(() => failed.length && console.warn(`以下 ID 关注失败，请重试或手动关注\n\n${JSON.stringify(failed)}`))
-})(/*上一步的结果*/)
-```
