@@ -29,52 +29,58 @@
 
 ## 从正常网页微博中提取，在关注人页面，一直滚动直到输出结果
 ```javascript
-// 创建一个全局的空数组，用于保存关注的人名单
-const globalList = [];
+// 创建一个全局的 Map，用于保存关注的人名单
+const globalMap = new Map();
 
-// 创建一个计数器，用于记录全局列表的变化次数
+// 创建一个计数器，用于记录全局 Map 的变化次数
 let changeCount = 0;
 
-// 添加一个函数，用于检查全局列表是否超过三次不再变化，并输出列表
-function checkAndOutputList() {
-  if (changeCount >= 10) {
-    // 输出全局列表
-    console.log('全局列表:', globalList);
+// 添加一个函数，用于检查全局 Map 是否超过三次不再变化，并输出 Map
+function checkAndOutputMap() {
+  if (changeCount >= 3) {
+    // 输出全局 Map
+    console.log('全局 Map:', globalMap);
     
     // 停止监听滚动事件，以防止重复输出
-    window.removeEventListener('scroll', updateGlobalList);
+    window.removeEventListener('scroll', updateGlobalMap);
   }
 }
 
 // 监听页面的滚动事件
-function updateGlobalList() {
+function updateGlobalMap() {
   // 找到具有 usercard 属性的 span 元素
   const elements = document.querySelectorAll('span[usercard]');
   
-  // 遍历每个元素并提取其文本内容
+  // 遍历每个元素并提取其文本内容，并以 usercard 为键，内容为值，加入全局 Map
   elements.forEach(element => {
+    const usercard = element.getAttribute('usercard');
     const content = element.innerText;
     
-    // 检查内容是否已经在全局列表中
-    if (!globalList.includes(content)) {
-      // 将新的内容加入全局列表
-      globalList.push(content);
+    // 检查是否已经存在于全局 Map，如果不存在则加入
+    if (!globalMap.has(usercard)) {
+      globalMap.set(usercard, content);
       
       // 增加变化计数器
       changeCount++;
       
       // 重新设置计时器
       clearTimeout(outputTimeout);
-      outputTimeout = setTimeout(checkAndOutputList, 1000);
+      outputTimeout = setTimeout(checkAndOutputMap, 1000);
     }
   });
 }
 
 // 初始化页面滚动事件监听
-window.addEventListener('scroll', updateGlobalList);
+window.addEventListener('scroll', updateGlobalMap);
 
-// 初始化全局列表检查定时器
-let outputTimeout = setTimeout(checkAndOutputList, 3000);
+// 初始化全局 Map 检查定时器
+let outputTimeout = setTimeout(checkAndOutputMap, 3000);
+
+// 获取globalMap的所有键（usercard值）
+const keys = Array.from(globalMap.keys());
+
+// 输出所有键
+console.log('全局 Map 的所有键:', keys);
 ```
 
 ## 转移关注人，格式：[3027806214,5991116818,1847588883]
